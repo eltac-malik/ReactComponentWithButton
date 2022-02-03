@@ -1,26 +1,40 @@
 import './App.css';
-import Button from "./components/Button.js"
-import Input from "./components/Input.js"
-import Result from "./components/Result.js"
-import {useState} from 'react'
+import {useState,useEffect} from 'react'
 
 function App() {
 
-  const [name,setName] = useState("")
-  const [btnname,setSetname] = useState("")
+  const [user,setUser] = useState([]);
+  const [filter,setFilter] = useState("");
+  
+      useEffect(()=>
+      {
+        fetch("https://jsonplaceholder.typicode.com/users")
+        .then(resp => resp.json())
+        .then(data => setUser(data))
+      },[])
+      
+    
+      const restfilter = user.filter((item) =>
+      {
+        return Object.keys(item).some((key) => item[key].toString().toLowerCase().includes(filter.toLowerCase()))
+      })
 
-  const click = () => setSetname(name)
+      
 
-  return (
-    <div className="App">
-      <br />
-    <Input value={name} setname={setName} />
-      <br />
-    <Button addname = {click}/>
-      <br />    
-    <Result value={btnname} />
-    </div>
+      return (
+        <div className="App">
+
+    <br />
+
+    <input placeholder='Seacrh' onChange={(e)=>{setFilter(e.target.value)}} />
+
+    <h4>
+      {restfilter.map((e,i)=> (<div key={i}>{e.username}  --  {e.name}</div>))}
+    </h4>
+
+    </div>  
   );
-}
+}  
+
 
 export default App;
